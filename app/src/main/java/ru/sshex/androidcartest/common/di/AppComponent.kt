@@ -9,5 +9,4 @@ import javax.inject.Singleton
 @Component(modules = [ApplicationContextModule::class])
 interface AppComponent {
 	fun currenciesBuilder(): CarPlaygroundComponent.Builder
-
 }
