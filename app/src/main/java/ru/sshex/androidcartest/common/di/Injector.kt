@@ -17,7 +17,7 @@ object Injector {
 		if (appComponent == null) {
 			throw IllegalStateException("Must initialize AppComponent")
 		}
-		appComponent!!.currenciesBuilder().build()
+		appComponent!!.carPlaygroundBuilder().build()
 	}
 }
 

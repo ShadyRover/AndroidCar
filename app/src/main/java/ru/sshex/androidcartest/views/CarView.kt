@@ -3,6 +3,7 @@ package ru.sshex.androidcartest.views
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -61,6 +62,7 @@ class CarView @JvmOverloads constructor(
 			val height = MeasureSpec.getSize(heightMeasureSpec)
 			carFrame.x = width / 2f
 			carFrame.y = height - (height / 5f)
+			carFrame.saveLastXY()
 		}
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 	}
@@ -72,6 +74,7 @@ class CarView @JvmOverloads constructor(
 		canvas.drawBitmap(carBitmap, carMatrix, null)
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		return if (!movingFlag) {
 			moveToPoint(event.x, event.y)
@@ -82,45 +85,6 @@ class CarView @JvmOverloads constructor(
 	}
 
 	private fun moveToPoint(toX: Float, toY: Float) {
-
-		/*	var angleToPoint = Math.toDegrees(
-				atan2(
-					(carY - toY),
-					(carX - toX)
-				).toDouble()
-			).toFloat()
-			if (angleToPoint < 0) angleToPoint += 360*/
-
-		/*	var atanXY = Math.toDegrees(
-				atan2(
-					(carY),
-					(carX)
-				).toDouble()
-			).toFloat()
-
-			Log.d(
-				"MOVE", "rotate angle $angleToPoint"
-			)
-			Log.d("MOVE", "rotate angle ORIG ANGLE = ${carAngle}")
-			Log.d("MOVE", "rotate angle ATAN2 XY = ${atanXY}")
-			Log.d("MOVE", "rotate angle ORIG -90 ANGLE = ${90 - carAngle}")
-			Log.d("MOVE", "moveToPoint() called with: toX = [$toX], toY = [$toY]")*/
-
-		/*val angleToControlPoint = Math.toDegrees(
-		atan2(
-			(carY - cy2),
-			(carX - cx2)
-		).toDouble()
-	).toFloat()
-
-	val diffAngle = Math.abs(Math.abs(angleToPoint) - Math.abs(carAngle))
-	Log.d(
-		"MOVE", "rotate angle DIFF $diffAngle"
-	)
-	val linearPath = diffAngle <= 40f
-	Log.d(
-		"MOVE", "Is LINEAR  $linearPath  =  $diffAngle"
-	)*/
 		movingFlag = true
 
 		val bezierPoint = carFrame.getBezierPoint(width.toFloat(), height.toFloat())
@@ -132,15 +96,6 @@ class CarView @JvmOverloads constructor(
 				duration = 3000
 				interpolator = this@CarView.interpolator
 				addUpdateListener {
-					/*carY = interpolate(tmpCarY, toY, it.animatedValue as Float)
-
-					carX = interpolate(tmpCarX, toX, it.animatedValue as Float)
-					carAngle = interpolate(
-						carAngle.toFloat(),
-						newAngle,
-						it.animatedValue as Float
-					).toDouble()*/
-
 					carFrame.x = BezierUtils.calcBezier(it.animatedValue as Float, carFrame.tempX, bx, toX)
 					carFrame.y = BezierUtils.calcBezier(it.animatedValue as Float, carFrame.tempY, by, toY)
 					carFrame.angle = BezierUtils.calcAngle(
@@ -152,7 +107,7 @@ class CarView @JvmOverloads constructor(
 						toX,
 						-toY
 					)
-					Log.d("MOVE", "moveToPoint() carAngle = [${carFrame.angle}]")
+					Log.d("CarView", "moveToPoint() carAngle = [${carFrame.angle}]")
 					postInvalidateOnAnimation()
 				}
 				addListener(
