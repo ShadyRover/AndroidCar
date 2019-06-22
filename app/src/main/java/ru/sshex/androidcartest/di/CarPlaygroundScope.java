@@ -1,4 +1,4 @@
-package ru.sshex.androidcartest.presentation.di;
+package ru.sshex.androidcartest.di;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
