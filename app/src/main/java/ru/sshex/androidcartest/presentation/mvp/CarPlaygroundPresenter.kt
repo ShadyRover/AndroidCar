@@ -6,4 +6,9 @@ import javax.inject.Inject
 
 @InjectViewState
 class CarPlaygroundPresenter @Inject constructor() : MvpPresenter<CarPlaygroundView>() {
+	fun onSeekBarSpeedChange(progress: Int) {
+		val speed = 6000 - (progress+1) * 500
+		viewState.setSpeed(speed.toLong())
+		viewState.stopCar()
+	}
 }

@@ -1,4 +1,4 @@
-package ru.sshex.androidcartest.views
+package ru.sshex.androidcartest.views.car
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -28,7 +28,9 @@ class CarView @JvmOverloads constructor(
 	private var movingFlag = false
 	private var initFrame = false
 
-	private var carFrame: CarFrame = CarFrame(angle = 90.0)
+	private var carFrame: CarFrame =
+		CarFrame(speed = 3000, angle = 90.0)
+	private var animator: ValueAnimator? = null
 
 	private var interpolator: Interpolator = AccelerateDecelerateInterpolator()
 	private lateinit var carBitmap: Bitmap
@@ -88,16 +90,19 @@ class CarView @JvmOverloads constructor(
 		movingFlag = true
 
 		val bezierPoint = carFrame.getBezierPoint(width.toFloat(), height.toFloat())
+		animator = ValueAnimator.ofFloat(0f, 1f)
 		bezierPoint?.run {
 			val bx = first
 			val by = second
 
-			ValueAnimator.ofFloat(0f, 1f).apply {
-				duration = 3000
+			animator?.apply {
+				duration = carFrame.speed
 				interpolator = this@CarView.interpolator
 				addUpdateListener {
-					carFrame.x = BezierUtils.calcBezier(it.animatedValue as Float, carFrame.tempX, bx, toX)
-					carFrame.y = BezierUtils.calcBezier(it.animatedValue as Float, carFrame.tempY, by, toY)
+					carFrame.x = BezierUtils
+						.calcBezier(it.animatedValue as Float, carFrame.tempX, bx, toX)
+					carFrame.y = BezierUtils
+						.calcBezier(it.animatedValue as Float, carFrame.tempY, by, toY)
 					carFrame.angle = BezierUtils.calcAngle(
 						it.animatedValue as Float,
 						carFrame.tempX,
@@ -123,9 +128,18 @@ class CarView @JvmOverloads constructor(
 		}
 	}
 
+	fun setSpeed(speed: Long) {
+		carFrame.speed = speed
+	}
+
+	fun stopAnimation() {
+		animator?.cancel()
+	}
+
 	data class CarFrame(
 		var x: Float = 0f,
 		var y: Float = 0f,
+		var speed: Long = 3000,
 		var tempX: Float = 0f,
 		var tempY: Float = 0f,
 		var angle: Double
@@ -158,20 +172,18 @@ class CarView @JvmOverloads constructor(
 
 				in 181..270 -> {
 					//check left and bot border
-					val cY = rootHeight
 					val cX = (-rootHeight - b) / k
 
 					val borderB = -y.toDouble()
 
-					return calcXYForTopSector(cX.toFloat(), cY, b = b, k = k, borderK = borderK, borderB = borderB)
+					return calcXYForTopSector(cX.toFloat(), rootHeight, b = b, k = k, borderK = borderK, borderB = borderB)
 				}
 				in 271..360 -> {
 					//check bot and right border
-					val cY = rootHeight
 					val cX = (-rootHeight - b) / k
 
 					val borderB = -y - borderK * rootWidth.toDouble()
-					return calcXYForTopSector(cX.toFloat(), cY, b = b, k = k, borderK = borderK, borderB = borderB)
+					return calcXYForTopSector(cX.toFloat(), rootHeight, b = b, k = k, borderK = borderK, borderB = borderB)
 
 				}
 			}

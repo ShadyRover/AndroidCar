@@ -1,9 +1,12 @@
-package ru.sshex.androidcartest.views
+package ru.sshex.androidcartest.views.car
 
 import kotlin.math.atan2
 
 class BezierUtils {
 	companion object {
+		/**
+		 * Calculates bezier function with one control point
+		 */
 		fun calcBezier(time: Float, p0: Float, p1: Float, p2: Float): Float {
 			return (Math.pow((1 - time).toDouble(), 2.0) * p0
 					+ (2f * (1 - time) * time * p1).toDouble()
@@ -13,8 +16,7 @@ class BezierUtils {
 
 		/**
 		 * move of car - simple quadratic bezier function with 3 point
-		 * https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B%C3%A9zier_curves
-		 * @param   time   - the time from start.z
+		 * @param   time   - start time part between 0..1
 		 * @param   p0x     - the start point x coord
 		 * @param   p0y     - the start point y coord
 		 * @param   p1x     - the control point x coord

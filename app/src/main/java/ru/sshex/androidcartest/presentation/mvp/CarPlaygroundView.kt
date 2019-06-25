@@ -6,4 +6,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndStrategy::class)
 interface CarPlaygroundView : MvpView {
+	fun setSpeed(speed: Long)
+	fun stopCar()
 }
